@@ -18,9 +18,6 @@
 
 #import <objc/runtime.h>
 
-//Set this to 1 to wrap init
-#define SINGLETON_IS_SYNCHRONIZED 1
-
 #define SYNTHESIZE_SINGLETON_FOR_CLASS_HEADER(__CLASSNAME__)	\
 	\
 + (__CLASSNAME__ *)sharedInstance;	\
@@ -42,7 +39,7 @@ static volatile __CLASSNAME__ *_sharedInstance = nil;	\
 		if(_sharedInstance == nil){	\
 			_sharedInstance = [[self alloc] init];	\
 			if(_sharedInstance){	\
-				method_setImplementation(class_getClassMethod(self, @selector(sharedInstance)), method_getImplementation(class_getClassMethod(self, @selector(sharedInstanceNoSynch))));	\
+				method_exchangeImplementations(class_getClassMethod(self, @selector(sharedInstance)), class_getClassMethod(self, @selector(sharedInstanceNoSynch)));	\
 				\
 				method_setImplementation(class_getInstanceMethod(self, @selector(retainCount)), class_getMethodImplementation(self, @selector(retainCountDoNothing)));	\
 				method_setImplementation(class_getInstanceMethod(self, @selector(release)), class_getMethodImplementation(self, @selector(releaseDoNothing)));	\
@@ -69,9 +66,11 @@ static volatile __CLASSNAME__ *_sharedInstance = nil;	\
 + (void)purgeSharedInstance	\
 {	\
 	@synchronized(self){	\
-		method_setImplementation(class_getInstanceMethod([self class], @selector(retainCount)), class_getMethodImplementation([self class], @selector(retainCountDoSomething)));	\
-		method_setImplementation(class_getInstanceMethod([self class], @selector(release)), class_getMethodImplementation([self class], @selector(releaseDoSomething)));	\
-		method_setImplementation(class_getInstanceMethod([self class], @selector(autorelease)), class_getMethodImplementation([self class], @selector(autoreleaseDoSomething)));	\
+		method_exchangeImplementations(class_getClassMethod(self, @selector(sharedInstance)), class_getClassMethod(self, @selector(sharedInstanceNoSynch)));	\
+		\
+		method_setImplementation(class_getInstanceMethod(self, @selector(retainCount)), class_getMethodImplementation(self, @selector(retainCountDoSomething)));	\
+		method_setImplementation(class_getInstanceMethod(self, @selector(release)), class_getMethodImplementation(self, @selector(releaseDoSomething)));	\
+		method_setImplementation(class_getInstanceMethod(self, @selector(autorelease)), class_getMethodImplementation(self, @selector(autoreleaseDoSomething)));	\
 		[_sharedInstance release];	\
 		_sharedInstance = nil;	\
 	}	\
