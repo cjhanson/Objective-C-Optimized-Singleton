@@ -1,0 +1,2 @@
+A Singleton Macro that swaps method implementations at runtime so that only the initialization portion will require syncrhonization (lock).
+- Specifically it uses method_setImplementation() to dynamically replace the sharedInstance access method with one that does not instantiate a new object.
