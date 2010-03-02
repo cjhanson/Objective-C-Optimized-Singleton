@@ -1,2 +1,5 @@
 A Singleton Macro that swaps method implementations at runtime so that only the initialization portion will require syncrhonization (lock).
 - Specifically it uses method_setImplementation() to dynamically replace the sharedInstance access method with one that does not instantiate a new object and thus does not require @synchronized.
+
+It is based on the work here: http://cocoawithlove.com/2008/11/singletons-appdelegates-and-top-level.html  by Matt Gallagher
+But changing the implementation to use method swizzling as described here: http://googlemac.blogspot.com/2006/11/synchronized-swimming-part-2.html by Dave MacLachlan of Google.
