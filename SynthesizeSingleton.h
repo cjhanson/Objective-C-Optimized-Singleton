@@ -98,8 +98,8 @@
 @interface SS_CLASSNAME (SynthesizeSingletonPrivate)	\
 - (NSUInteger)retainCountDoNothing;	\
 - (NSUInteger)retainCountDoSomething;	\
-- (void)releaseDoNothing;	\
-- (void)releaseDoSomething;	\
+- (oneway void)releaseDoNothing;	\
+- (oneway void)releaseDoSomething;	\
 - (id)autoreleaseDoNothing;	\
 - (id)autoreleaseDoSomething; \
 @end
@@ -192,14 +192,14 @@ static volatile SS_CLASSNAME* _##SS_CLASSNAME##_sharedInstance = nil;	\
 	return [super retainCount];	\
 }	\
 	\
-- (void)release	\
+- (oneway void)release	\
 {	\
 	NSAssert1(1==0, @"SynthesizeSingleton: %@ ERROR: -(void)release method did not get swizzled.", self);	\
 }	\
 	\
-- (void)releaseDoNothing{}	\
+- (oneway void)releaseDoNothing{}	\
 	\
-- (void)releaseDoSomething	\
+- (oneway void)releaseDoSomething	\
 {	\
 	@synchronized(self)	\
 	{	\
