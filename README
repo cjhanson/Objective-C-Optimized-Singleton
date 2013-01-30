@@ -1,3 +1,25 @@
+If your system supports blocks (like iOS 4+) then you should just use the dispatch_once function as follows:
+
++ (MyClass *)sharedInstance
+{
+    static MyClass *sharedInstance = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedInstance = [[MyClass alloc] init];
+        // Do any other initialisation stuff here
+    });
+    return sharedInstance;
+}
+
+This method was sourced from http://stackoverflow.com/questions/7568935/how-do-i-implement-an-objective-c-singleton-that-is-compatible-with-arc courtesy Nick Forge
+
+
+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+
+
+See the "pre-blocks" branch for the old implementation:
+
 A Singleton Macro that swaps method implementations at runtime so that only the initialization portion will require syncrhonization (lock).
 - Specifically it uses method_setImplementation() to dynamically replace the sharedInstance access method with one that does not instantiate a new object and thus does not require @synchronized.
 
